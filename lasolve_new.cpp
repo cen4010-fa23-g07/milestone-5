@@ -1,19 +1,23 @@
 // lasolve_new.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
+/********include directives*******/
 #include <iostream>
 #include <string>
 #include <vector>
 #include <sstream>
 
+/********namespaces*******/
 using namespace std;
 
+/********function prototypes*******/
 bool mult_div(vector<string>&, vector <string>);
 bool sort_eq(vector<string>&, vector<string>);
 void add_sub(vector<string>&, vector<string>);
 void solve(vector<string>&);
 vector<string> create_new_labels(vector<string>);
 
+/********functions*******/
 bool mult_div(vector<string>& token_eq, vector<string> label_eq) {
 	for (int i = 1; i < token_eq.size(); i++) {
 		float el1, el2, result;
@@ -243,6 +247,7 @@ vector<string> create_new_labels(vector<string> token_eq) {
 	return labels;
 }
 
+/********driver*******/
 int main()
 {
 	string orig_eq = "- 3 + 5x / 5x = 5x";
