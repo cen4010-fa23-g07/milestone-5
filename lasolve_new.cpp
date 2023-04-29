@@ -8,10 +8,51 @@
 
 using namespace std;
 
+bool mult_div(vector<string>&, vector <string>);
 bool sort_eq(vector<string>&, vector<string>);
 void add_sub(vector<string>&, vector<string>);
 void solve(vector<string>&);
 vector<string> create_new_labels(vector<string>);
+
+bool mult_div(vector<string>& token_eq, vector<string> label_eq) {
+	for (int i = 1; i < token_eq.size(); i++) {
+		float el1, el2, result;
+		string str_result;
+		bool step = false;
+
+		if (label_eq[i] == "*op") {
+			el1 = stof(token_eq[i - 1]);
+			el2 = stof(token_eq[i + 1]);
+			result = el1 * el2;
+			str_result = to_string(result);
+
+			if (label_eq[i-1] == "var" || label_eq[i+1] == "var") {
+				str_result += "x";
+			}
+			step = true;
+		}
+		else if (label_eq[i] == "/op") {
+			el1 = stof(token_eq[i - 1]);
+			el2 = stof(token_eq[i + 1]);
+			result = el1 / el2;
+			str_result = to_string(result);
+
+			if ( (label_eq[i - 1] == "var" || label_eq[i + 1] == "var") && (label_eq[i - 1] != label_eq[i + 1]) ) {
+				str_result += "x";
+			}
+			step = true;
+		}
+
+		if (step) {
+			token_eq.erase(token_eq.begin() + (i - 1));
+			token_eq.erase(token_eq.begin() + (i - 1));
+			token_eq.erase(token_eq.begin() + (i - 1));
+			token_eq.insert(token_eq.begin() + (i - 1), str_result);
+			return false;
+		}
+	}
+	return true;
+}
 
 bool sort_eq(vector<string>& token_eq, vector<string> label_eq) {
 	bool lhs = true;
@@ -176,7 +217,13 @@ vector<string> create_new_labels(vector<string> token_eq) {
 	vector<string> labels(token_eq.size());
 
 	for (int i = 0; i < token_eq.size(); i++) {
-		if (token_eq[i] == "+") {
+		if (token_eq[i] == "*") {
+			labels[i] = "*op";
+		}
+		else if (token_eq[i] == "/") {
+			labels[i] = "/op";
+		}
+		else if (token_eq[i] == "+") {
 			labels[i] = "+op";
 		}
 		else if (token_eq[i] == "-") {
@@ -198,7 +245,7 @@ vector<string> create_new_labels(vector<string> token_eq) {
 
 int main()
 {
-	string orig_eq = "- 3 + 5 + 2x = 5x";
+	string orig_eq = "- 3 + 5x / 5x = 5x";
 	char delim = ' ';
 	stringstream ss(orig_eq);
 
@@ -214,42 +261,58 @@ int main()
 	cout << endl;
 
 	// holds labels for each element in separated equation
-	vector<string> orig_labels = create_new_labels(token_eq);
+	vector<string> labels_eq = create_new_labels(token_eq);
 
-	for (int i = 0; i < orig_labels.size(); i++) {
-		cout << orig_labels[i] << "\t";
+	for (int i = 0; i < labels_eq.size(); i++) {
+		cout << labels_eq[i] << "\t";
+	}
+	cout << endl;
+	
+	// take care of * and / operations
+	bool md = false;
+	while (!md) {
+		md = mult_div(token_eq, labels_eq);
+		labels_eq = create_new_labels(token_eq);
+	}
+
+	for (int i = 0; i < token_eq.size(); i++) {
+		cout << token_eq[i] << "\t";
+	}
+	cout << endl;
+	for (int i = 0; i < labels_eq.size(); i++) {
+		cout << labels_eq[i] << "\t";
 	}
 	cout << endl;
 
 	// put consts and vars each to one side
 	bool sorted = false;
 	while (!sorted) {
-		sorted = sort_eq(token_eq, orig_labels);
-		orig_labels = create_new_labels(token_eq);
+		sorted = sort_eq(token_eq, labels_eq);
+		labels_eq = create_new_labels(token_eq);
 	}
 
 	for (int i = 0; i < token_eq.size(); i++) {
 		cout << token_eq[i] << "\t";
 	}
 	cout << endl;
-	for (int i = 0; i < orig_labels.size(); i++) {
-		cout << orig_labels[i] << "\t";
+	for (int i = 0; i < labels_eq.size(); i++) {
+		cout << labels_eq[i] << "\t";
 	}
 	cout << endl;
 
 
 	// take care of + and - operations
 	while (token_eq.size() > 3) {
-		add_sub(token_eq, orig_labels);
-		orig_labels = create_new_labels(token_eq);
+		add_sub(token_eq, labels_eq);
+		labels_eq = create_new_labels(token_eq);
 	}
 
 	for (int i = 0; i < token_eq.size(); i++) {
 		cout << token_eq[i] << "\t";
 	}
 	cout << endl;
-	for (int i = 0; i < orig_labels.size(); i++) {
-		cout << orig_labels[i] << "\t";
+	for (int i = 0; i < labels_eq.size(); i++) {
+		cout << labels_eq[i] << "\t";
 	}
 	cout << endl;
 
@@ -260,8 +323,8 @@ int main()
 		cout << token_eq[i] << "\t";
 	}
 	cout << endl;
-	for (int i = 0; i < orig_labels.size(); i++) {
-		cout << orig_labels[i] << "\t";
+	for (int i = 0; i < labels_eq.size(); i++) {
+		cout << labels_eq[i] << "\t";
 	}
 	cout << endl;
 }
