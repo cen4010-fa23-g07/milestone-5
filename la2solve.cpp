@@ -12,17 +12,114 @@
 using namespace std;
 
 /********function prototypes*******/
+void case1(vector<vector<string>>&, vector<vector<string>>&, string&, string&);
+void case2(vector<vector<string>>&, vector<vector<string>>&, string&, string&);
 void case3(vector<vector<string>>&, vector<vector<string>>&, string&, string&);
 bool sort_eq(vector<string>&, vector<string>, string);
 bool format_eq(vector<string>&, string);
-void solve_x(vector<string>&);
-void solve_y(vector<string>&);
+void solve_eq(vector<string>&, string);
+//void solve_y(vector<string>&);
 bool add_sub(vector<string>&);
 vector<string> create_new_labels(vector<string>);
 int determine_case(vector<vector<string>>);
 string trim_white(string);
 
 /********functions*******/
+void case1(vector<vector<string>>& token_eq, vector<vector<string>>& label_eq, string& x_soln, string& y_soln) {
+
+}
+
+void case2(vector<vector<string>>& token_eq, vector<vector<string>>& label_eq, string& x_soln, string& y_soln) {
+	string solo_var, opp_var;
+	int solo_eq, opp_eq;
+
+	// if first equation has two variables
+	if ((find(label_eq[0].begin(), label_eq[0].end(), "varx") != label_eq[0].end()) && (find(label_eq[0].begin(), label_eq[0].end(), "vary") != label_eq[0].end())) {
+		solo_eq = 1;
+		opp_eq = 0;
+	}
+	// else first equation has one variable
+	else {
+		solo_eq = 0;
+		opp_eq = 1;
+	}
+
+	// determine solo variable
+	if (find(label_eq[solo_eq].begin(), label_eq[solo_eq].end(), "varx") != label_eq[solo_eq].end()) {
+		solo_var = "varx";
+		opp_var = "vary";
+	}
+	else {
+		solo_var = "vary";
+		opp_var = "varx";
+	}
+
+	// solve for one variable
+	bool one_sorted = false;
+	while (!one_sorted) {
+		one_sorted = sort_eq(token_eq[solo_eq], label_eq[solo_eq], solo_var);
+		label_eq[solo_eq] = create_new_labels(token_eq[solo_eq]);
+	}
+
+	bool one_added = false;
+	while (!one_added) {
+		one_added = add_sub(token_eq[solo_eq]);
+		label_eq[solo_eq] = create_new_labels(token_eq[solo_eq]);
+	}
+
+	solve_eq(token_eq[solo_eq], solo_var);
+	label_eq[solo_eq] = create_new_labels(token_eq[solo_eq]);
+	if (solo_var == "varx") {
+		x_soln = token_eq[solo_eq][2];
+		cout << "x = " << x_soln << endl;
+	}
+	else {
+		y_soln = token_eq[solo_eq][2];
+		cout << "y = " << y_soln << endl;
+	}
+
+	// isolate that variable in second equation
+	bool isolate_sorted = false;
+	while (!isolate_sorted) {
+		isolate_sorted = sort_eq(token_eq[opp_eq], label_eq[opp_eq], solo_var);
+		label_eq[opp_eq] = create_new_labels(token_eq[opp_eq]);
+	}
+
+	bool isolate_added = false;
+	while (!isolate_added) {
+		isolate_added = add_sub(token_eq[opp_eq]);
+		label_eq[opp_eq] = create_new_labels(token_eq[opp_eq]);
+	}
+
+	solve_eq(token_eq[opp_eq], solo_var);
+	label_eq[opp_eq] = create_new_labels(token_eq[opp_eq]);
+
+	// plug solution from solo equation into second equation
+	token_eq[opp_eq][0] = token_eq[solo_eq][2];
+	label_eq[opp_eq] = create_new_labels(token_eq[opp_eq]);
+
+	// solve for opposite variable
+	bool second_sorted = false;
+	while (!second_sorted) {
+		second_sorted = sort_eq(token_eq[opp_eq], label_eq[opp_eq], opp_var);
+		label_eq[opp_eq] = create_new_labels(token_eq[opp_eq]);
+	}
+
+	bool second_added = false;
+	while (!second_added) {
+		second_added = add_sub(token_eq[opp_eq]);
+		label_eq[opp_eq] = create_new_labels(token_eq[opp_eq]);
+	}
+
+	solve_eq(token_eq[opp_eq], opp_var);
+	if (solo_var == "varx") {
+		y_soln = token_eq[opp_eq][2];
+	}
+	else {
+		x_soln = token_eq[opp_eq][2];
+	}
+}
+
 void case3(vector<vector<string>>& token_eq, vector<vector<string>>& label_eq, string& x_soln, string& y_soln) {
 	if (find(label_eq[0].begin(), label_eq[0].end(), "varx") != label_eq[0].end()) {
 		bool x_sorted = false;
@@ -37,7 +134,7 @@ void case3(vector<vector<string>>& token_eq, vector<vector<string>>& label_eq, s
 			label_eq[0] = create_new_labels(token_eq[0]);
 		}
 
-		solve_x(token_eq[0]);
+		solve_eq(token_eq[0], "varx");
 		x_soln = token_eq[0][2];
 
 		bool y_sorted = false;
@@ -52,7 +149,7 @@ void case3(vector<vector<string>>& token_eq, vector<vector<string>>& label_eq, s
 			label_eq[1] = create_new_labels(token_eq[1]);
 		}
 
-		solve_y(token_eq[1]);
+		solve_eq(token_eq[1], "vary");
 		y_soln = token_eq[1][2];
 
 	}
@@ -69,7 +166,7 @@ void case3(vector<vector<string>>& token_eq, vector<vector<string>>& label_eq, s
 			label_eq[0] = create_new_labels(token_eq[0]);
 		}
 
-		solve_y(token_eq[0]);
+		solve_eq(token_eq[0], "vary");
 		y_soln = token_eq[0][2];
 
 		bool x_sorted = false;
@@ -84,7 +181,7 @@ void case3(vector<vector<string>>& token_eq, vector<vector<string>>& label_eq, s
 			label_eq[1] = create_new_labels(token_eq[1]);
 		}
 
-		solve_x(token_eq[1]);
+		solve_eq(token_eq[1], "varx");
 		x_soln = token_eq[1][2];
 	}
 }
@@ -176,6 +273,15 @@ bool sort_eq(vector<string>& token_eq, vector<string> label_eq, string variable)
 			return false;
 		}	// end of rhs
 	}	// end of for
+	
+	for (int i = 0; i < token_eq.size(); i++) {
+		cout << token_eq[i] << "\t";
+	}
+	cout << endl;
+	for (int i = 0; i < label_eq.size(); i++) {
+		cout << label_eq[i] << "\t";
+	}
+	cout << endl;
 
 	// if nothing on lhs
 	if (pos_equals == 0 && variable == "varx") {
@@ -286,6 +392,13 @@ bool format_eq(vector<string>& token_eq, string variable) {
 		token_eq.erase(token_eq.begin() + (pos_equals + 1));
 	}
 
+	// get rid of any double negatives
+	for (int i = 0; i < token_eq.size(); i++) {
+		if (token_eq[i].find("--") != string::npos) {
+			token_eq[i].erase(0, token_eq[i].find_first_not_of("--"));
+		}
+	}
+
 	if (ret == true) {
 		return true;
 	}
@@ -294,60 +407,88 @@ bool format_eq(vector<string>& token_eq, string variable) {
 	}
 }
 
-void solve_x(vector<string>& token_eq) {
-	float x_el = stof(token_eq[0]);
-	float const_el, y_el;
+void solve_eq(vector<string>& token_eq, string variable) {
+	if (variable == "varx") {
+		float x_el = stof(token_eq[0]);
+		float const_el, y_el;
 
-	// if two variables
-	if (token_eq.size() == 5) {
-		cout << "two vars" << endl;
-		y_el = stof(token_eq[2]);
-		const_el = stof(token_eq[4]);
+		// if two variables
+		if (token_eq.size() == 5) {
+			cout << "two vars" << endl;
+			y_el = stof(token_eq[2]);
+			const_el = stof(token_eq[4]);
 
-		y_el /= x_el;
-		const_el /= x_el;
+			y_el /= x_el;
+			const_el /= x_el;
 
-		token_eq[2] = to_string(y_el);
-		token_eq[2] += "y";
-		token_eq[4] = to_string(const_el);
+			token_eq[2] = to_string(y_el);
+			token_eq[2] += "y";
+			token_eq[4] = to_string(const_el);
+		}
+		// else if one variable
+		else {
+			const_el = stof(token_eq[2]);
+
+			const_el /= x_el;
+			token_eq[2] = to_string(const_el);
+		}
+
+		token_eq[0] = "x";
 	}
-	// else if one variable
 	else {
-		const_el = stof(token_eq[2]);
+		float y_el = stof(token_eq[0]);
+		float const_el, x_el;
 
-		const_el /= x_el;
-		token_eq[2] = to_string(const_el);
+		// if two variables
+		if (token_eq.size() == 5) {
+			x_el = stof(token_eq[2]);
+			const_el = stof(token_eq[4]);
+
+			x_el /= y_el;
+			const_el /= y_el;
+
+			token_eq[2] = to_string(x_el);
+			token_eq[2] += "x";
+			token_eq[4] = to_string(const_el);
+		}
+		// else if one variable
+		else {
+			const_el = stof(token_eq[2]);
+
+			const_el /= y_el;
+			token_eq[2] = to_string(const_el);
+		}
+
+		token_eq[0] = "y";
 	}
-
-	token_eq[0] = "x";
 }
 
-void solve_y(vector<string>& token_eq) {
-	float y_el = stof(token_eq[0]);
-	float const_el, x_el;
-
-	// if two variables
-	if (token_eq.size() == 5) {
-		x_el = stof(token_eq[2]);
-		const_el = stof(token_eq[4]);
-
-		x_el /= y_el;
-		const_el /= y_el;
-
-		token_eq[2] = to_string(x_el);
-		token_eq[2] += "x";
-		token_eq[4] = to_string(const_el);
-	}
-	// else if one variable
-	else {
-		const_el = stof(token_eq[2]);
-
-		const_el /= y_el;
-		token_eq[2] = to_string(const_el);
-	}
-
-	token_eq[0] = "y";
-}
+//void solve_y(vector<string>& token_eq) {
+//	float y_el = stof(token_eq[0]);
+//	float const_el, x_el;
+//
+//	// if two variables
+//	if (token_eq.size() == 5) {
+//		x_el = stof(token_eq[2]);
+//		const_el = stof(token_eq[4]);
+//
+//		x_el /= y_el;
+//		const_el /= y_el;
+//
+//		token_eq[2] = to_string(x_el);
+//		token_eq[2] += "x";
+//		token_eq[4] = to_string(const_el);
+//	}
+//	// else if one variable
+//	else {
+//		const_el = stof(token_eq[2]);
+//
+//		const_el /= y_el;
+//		token_eq[2] = to_string(const_el);
+//	}
+//
+//	token_eq[0] = "y";
+//}
 
 bool add_sub(vector<string>& token_eq) {
 	vector<string> label_eq = create_new_labels(token_eq);
@@ -469,8 +610,16 @@ int determine_case(vector<vector<string>> labels_eq) {
 			eq_case = 2;
 		}
 	}
-	else {
-		eq_case = 1;
+	else if (eq_x[0] == 1 && eq_y[0] == 1) {
+		if (eq_x[1] == 0 && eq_y[1] == 1) {
+			eq_case = 2;
+		}
+		else if (eq_x[1] == 1 && eq_y[1] == 0) {
+			eq_case = 2;
+		}
+		else if (eq_x[0] == 1 && eq_y[1] == 1) {
+			eq_case = 1;
+		}
 	}
 
 	return eq_case;
@@ -485,7 +634,7 @@ string trim_white(string str) {
 /********driver*******/
 int main()
 {
-	string orig_input = "3x + 3 = 2x, 5y + 10y = -18";
+	string orig_input = "3x + 3 = 2x, 5y + 10y = -18 + 3x";
 	char delim_sys = ',';
 	stringstream ss_sys(orig_input);
 
@@ -545,7 +694,7 @@ int main()
 		//case1();
 	}
 	else if (eq_case == 2) {
-		//case2();
+		case2(token_eq, labels_eq, x_soln, y_soln);
 	}
 	else {
 		case3(token_eq, labels_eq, x_soln, y_soln);
