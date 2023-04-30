@@ -18,7 +18,6 @@ void case3(vector<vector<string>>&, vector<vector<string>>&, string&, string&);
 bool sort_eq(vector<string>&, vector<string>, string);
 bool format_eq(vector<string>&, string);
 void solve_eq(vector<string>&, string);
-//void solve_y(vector<string>&);
 bool add_sub(vector<string>&);
 vector<string> create_new_labels(vector<string>);
 int determine_case(vector<vector<string>>);
@@ -26,7 +25,106 @@ string trim_white(string);
 
 /********functions*******/
 void case1(vector<vector<string>>& token_eq, vector<vector<string>>& label_eq, string& x_soln, string& y_soln) {
+	// isolate x in first equation
+	cout << "isolate x eq 1" << endl;
+	bool first_sorted_x = false;
+	while (!first_sorted_x) {
+		first_sorted_x = sort_eq(token_eq[0], label_eq[0], "varx");
+		label_eq[0] = create_new_labels(token_eq[0]);
+	}
 
+	bool first_added_x = false;
+	while (!first_added_x) {
+		first_added_x = add_sub(token_eq[0]);
+		label_eq[0] = create_new_labels(token_eq[0]);
+	}
+
+	solve_eq(token_eq[0], "varx");
+	label_eq[0] = create_new_labels(token_eq[0]);
+
+	// isoalte x in second equation
+	cout << "isolate x eq 2" << endl;
+	bool second_sorted_x = false;
+	while (!second_sorted_x) {
+		second_sorted_x = sort_eq(token_eq[1], label_eq[1], "varx");
+		label_eq[1] = create_new_labels(token_eq[1]);
+	}
+
+	bool second_added_x = false;
+	while (!second_added_x) {
+		second_added_x = add_sub(token_eq[1]);
+		label_eq[1] = create_new_labels(token_eq[1]);
+	}
+
+	solve_eq(token_eq[1], "varx");
+	label_eq[1] = create_new_labels(token_eq[1]);
+
+	// plug solution from first equation into second equation
+	cout << "plug into second eq" << endl;
+	token_eq[1].erase(token_eq[1].begin());
+	token_eq[1].insert(token_eq[1].begin(), token_eq[0][4]);
+	token_eq[1].insert(token_eq[1].begin(), token_eq[0][3]);
+	token_eq[1].insert(token_eq[1].begin(), token_eq[0][2]);
+	label_eq[1] = create_new_labels(token_eq[1]);
+
+	// solve for y in second equation
+	cout << "solve for y eq 2" << endl;
+	bool second_sorted_y = false;
+	while (!second_sorted_y) {
+		second_sorted_y = sort_eq(token_eq[1], label_eq[1], "vary");
+		label_eq[1] = create_new_labels(token_eq[1]);
+	}
+
+	bool second_added_y = false;
+	while (!second_added_y) {
+		second_added_y = add_sub(token_eq[1]);
+		label_eq[1] = create_new_labels(token_eq[1]);
+	}
+
+	solve_eq(token_eq[1], "vary");
+	label_eq[1] = create_new_labels(token_eq[1]);
+	y_soln = token_eq[1][2];
+	cout << "y = " << y_soln << endl;
+
+	// isolate y in first equation
+	cout << "isolate y eq 1" << endl;
+	bool first_sorted_y = false;
+	while (!first_sorted_y) {
+		first_sorted_y = sort_eq(token_eq[0], label_eq[0], "vary");
+		label_eq[0] = create_new_labels(token_eq[0]);
+	}
+
+	bool first_added_y = false;
+	while (!first_added_y) {
+		first_added_y = add_sub(token_eq[0]);
+		label_eq[0] = create_new_labels(token_eq[0]);
+	}
+
+	solve_eq(token_eq[0], "vary");
+	label_eq[0] = create_new_labels(token_eq[0]);
+
+	// plug y into first equation
+	cout << "plug y into eq 1" << endl;
+	token_eq[0][0] = y_soln;
+	label_eq[0] = create_new_labels(token_eq[0]);
+
+	// solve first equation for x
+	cout << "solve for x eq 1" << endl;
+	bool final_sorted_x = false;
+	while (!final_sorted_x) {
+		final_sorted_x = sort_eq(token_eq[0], label_eq[0], "varx");
+		label_eq[0] = create_new_labels(token_eq[0]);
+	}
+
+	bool final_added_x = false;
+	while (!final_added_x) {
+		final_added_x = add_sub(token_eq[0]);
+		label_eq[0] = create_new_labels(token_eq[0]);
+	}
+
+	solve_eq(token_eq[0], "varx");
+	label_eq[0] = create_new_labels(token_eq[0]);
+	x_soln = token_eq[0][2];
 }
 
 void case2(vector<vector<string>>& token_eq, vector<vector<string>>& label_eq, string& x_soln, string& y_soln) {
@@ -78,7 +176,7 @@ void case2(vector<vector<string>>& token_eq, vector<vector<string>>& label_eq, s
 		cout << "y = " << y_soln << endl;
 	}
 
-	// isolate that variable in second equation
+	// isolate that variable in opp equation
 	bool isolate_sorted = false;
 	while (!isolate_sorted) {
 		isolate_sorted = sort_eq(token_eq[opp_eq], label_eq[opp_eq], solo_var);
@@ -94,7 +192,7 @@ void case2(vector<vector<string>>& token_eq, vector<vector<string>>& label_eq, s
 	solve_eq(token_eq[opp_eq], solo_var);
 	label_eq[opp_eq] = create_new_labels(token_eq[opp_eq]);
 
-	// plug solution from solo equation into second equation
+	// plug solution from solo equation into opp equation
 	token_eq[opp_eq][0] = token_eq[solo_eq][2];
 	label_eq[opp_eq] = create_new_labels(token_eq[opp_eq]);
 
@@ -433,7 +531,7 @@ void solve_eq(vector<string>& token_eq, string variable) {
 			token_eq[2] = to_string(const_el);
 		}
 
-		token_eq[0] = "x";
+		token_eq[0] = "1x";
 	}
 	else {
 		float y_el = stof(token_eq[0]);
@@ -459,36 +557,9 @@ void solve_eq(vector<string>& token_eq, string variable) {
 			token_eq[2] = to_string(const_el);
 		}
 
-		token_eq[0] = "y";
+		token_eq[0] = "1y";
 	}
 }
-
-//void solve_y(vector<string>& token_eq) {
-//	float y_el = stof(token_eq[0]);
-//	float const_el, x_el;
-//
-//	// if two variables
-//	if (token_eq.size() == 5) {
-//		x_el = stof(token_eq[2]);
-//		const_el = stof(token_eq[4]);
-//
-//		x_el /= y_el;
-//		const_el /= y_el;
-//
-//		token_eq[2] = to_string(x_el);
-//		token_eq[2] += "x";
-//		token_eq[4] = to_string(const_el);
-//	}
-//	// else if one variable
-//	else {
-//		const_el = stof(token_eq[2]);
-//
-//		const_el /= y_el;
-//		token_eq[2] = to_string(const_el);
-//	}
-//
-//	token_eq[0] = "y";
-//}
 
 bool add_sub(vector<string>& token_eq) {
 	vector<string> label_eq = create_new_labels(token_eq);
@@ -634,7 +705,7 @@ string trim_white(string str) {
 /********driver*******/
 int main()
 {
-	string orig_input = "3x + 3 = 2x, 5y + 10y = -18 + 3x";
+	string orig_input = "3x + 2 = 5y + 2x + 1, 5y + 10 - 3x = 10y + 5";
 	char delim_sys = ',';
 	stringstream ss_sys(orig_input);
 
@@ -691,7 +762,7 @@ int main()
 	string x_soln, y_soln;
 
 	if (eq_case == 1) {
-		//case1();
+		case1(token_eq, labels_eq, x_soln, y_soln);
 	}
 	else if (eq_case == 2) {
 		case2(token_eq, labels_eq, x_soln, y_soln);
@@ -702,41 +773,4 @@ int main()
 
 	cout << "x = " << x_soln << endl;
 	cout << "y = " << y_soln << endl;
-
-	///*************test****************/
-	//bool sorted = false;
-	//while (!sorted) {
-	//	sorted = sort_eq(token_eq[0], labels_eq[0], "vary");
-	//	labels_eq[0] = create_new_labels(token_eq[0]);
-	//}
-
-	//for (int i = 0; i < token_eq[0].size(); i++) {
-	//	cout << token_eq[0][i] << "\t";
-	//}
-	//cout << endl;
-	//for (int i = 0; i < labels_eq[0].size(); i++) {
-	//	cout << labels_eq[0][i] << "\t";
-	//}
-	//cout << endl;
-
-	//bool added = false;
-	//while (!added) {
-	//	added = add_sub(token_eq[0]);
-	//	labels_eq[0] = create_new_labels(token_eq[0]);
-	//}
-
-	//for (int i = 0; i < token_eq[0].size(); i++) {
-	//	cout << token_eq[0][i] << "\t";
-	//}
-	//cout << endl;
-	//for (int i = 0; i < labels_eq[0].size(); i++) {
-	//	cout << labels_eq[0][i] << "\t";
-	//}
-	//cout << endl;
-
-	//solve_x(token_eq[0]);
-	//for (int i = 0; i < token_eq[0].size(); i++) {
-	//	cout << token_eq[0][i] << "\t";
-	//}
-	//cout << endl;
 }
