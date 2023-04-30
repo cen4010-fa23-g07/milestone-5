@@ -179,6 +179,7 @@ void sort_add_solve(vector<string>& token_eq, vector<string>& label_eq, string v
 * @param token_eq an equation broken into tokens, "returns" the sorted equation
 * @param label_eq an equation broken into token labels
 * @param variable the label to be on the lhs of the equation, either "varx" or "vary"
+* @return whether the equation has finished sorting or not
 */
 bool sort_eq(vector<string>& token_eq, vector<string> label_eq, string variable) {
 	bool lhs = true;
@@ -327,6 +328,7 @@ bool sort_eq(vector<string>& token_eq, vector<string> label_eq, string variable)
 * @param token_eq an equation broken into tokens, "returns" the formatted equation
 * @param label_eq an equation broken into token labels
 * @param variable the label to be on the lhs of the equation, either "varx" or "vary"
+* @return whether the equation has finished formatting or not
 */
 bool format_eq(vector<string>& token_eq, string variable) {
 	bool ret = true;
@@ -472,6 +474,7 @@ void solve_eq(vector<string>& token_eq, string variable) {
 /*
 * @summary intakes a sorted equation and adds like terms
 * @param token_eq an equation broken into tokens, "returns" the condensed equation
+* @return whether the equation has finished adding like terms or not
 */
 bool add_sub(vector<string>& token_eq) {
 	vector<string> label_eq = create_new_labels(token_eq);
@@ -525,6 +528,7 @@ bool add_sub(vector<string>& token_eq) {
 /*
 * @summary intakes a tokenized equation and creates labels for its tokens
 * @param token_eq an equation broken into tokens, to be used to generate token labels
+* @return the equation, broken into its token labels
 */
 vector<string> create_new_labels(vector<string> token_eq) {
 	vector<string> labels(token_eq.size());
@@ -562,6 +566,7 @@ vector<string> create_new_labels(vector<string> token_eq) {
 /*
 * @summary determines how many variables each equation has and breaks it into cases dependent on that
 * @param labels_eq an equation broken into token labels
+* @return case number
 */
 int determine_case(vector<vector<string>> labels_eq) {
 	int eq_case = 0;
@@ -619,6 +624,7 @@ int determine_case(vector<vector<string>> labels_eq) {
 /*
 * @summary trims a string of " " at its beginning and end
 * @param str string to be trimmed of " "
+* @return string trimmed of " "
 */
 string trim_white(string str) {
 	str.erase(str.find_last_not_of(" ") + 1);
