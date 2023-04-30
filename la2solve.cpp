@@ -25,6 +25,14 @@ int determine_case(vector<vector<string>>);
 string trim_white(string);
 
 /********functions*******/
+
+/*
+* @summary solves 2 equations in the case where both contain 2 variables
+* @param token_eq the two equations broken into tokens
+* @param label_eq the two equations broken into token labels
+* @param x_soln "returns" the answer to x
+* @param y_soln "returns" the answer to y
+*/
 void case1(vector<vector<string>>& token_eq, vector<vector<string>>& label_eq, string& x_soln, string& y_soln) {
 	// isolate x in first equation
 	sort_add_solve(token_eq[0], label_eq[0], "varx");
@@ -58,6 +66,13 @@ void case1(vector<vector<string>>& token_eq, vector<vector<string>>& label_eq, s
 	x_soln = token_eq[0][2];
 }
 
+/*
+* @summary solves 2 equations in the case where one contains 1 variable, and the other contains 2 variables
+* @param token_eq the two equations broken into tokens
+* @param label_eq the two equations broken into token labels
+* @param x_soln "returns" the answer to x
+* @param y_soln "returns" the answer to y
+*/
 void case2(vector<vector<string>>& token_eq, vector<vector<string>>& label_eq, string& x_soln, string& y_soln) {
 	string solo_var, opp_var;
 	int solo_eq, opp_eq;
@@ -111,6 +126,13 @@ void case2(vector<vector<string>>& token_eq, vector<vector<string>>& label_eq, s
 	}
 }
 
+/*
+* @summary solves 2 equations in the case where both contain only 1 variable
+* @param token_eq the two equations broken into tokens
+* @param label_eq the two equations broken into token labels
+* @param x_soln "returns" the answer to x
+* @param y_soln "returns" the answer to y
+*/
 void case3(vector<vector<string>>& token_eq, vector<vector<string>>& label_eq, string& x_soln, string& y_soln) {
 	if (find(label_eq[0].begin(), label_eq[0].end(), "varx") != label_eq[0].end()) {
 		sort_add_solve(token_eq[0], label_eq[0], "varx");
@@ -129,6 +151,12 @@ void case3(vector<vector<string>>& token_eq, vector<vector<string>>& label_eq, s
 	}
 }
 
+/*
+* @summary intakes an equation broken into tokens and solves it
+* @param token_eq an equation broken into tokens, "returns" the solved equation
+* @param label_eq an equation broken into token labels
+* @param variable the label to be solved for, either "varx" or "vary"
+*/
 void sort_add_solve(vector<string>& token_eq, vector<string>& label_eq, string variable) {
 	bool sorted = false;
 	while (!sorted) {
@@ -146,6 +174,12 @@ void sort_add_solve(vector<string>& token_eq, vector<string>& label_eq, string v
 	label_eq = create_new_labels(token_eq);
 }
 
+/*
+* @summary intakes an equation broken into tokens and sorts it so that one variable is on the lhs, while the other & constants are on the rhs
+* @param token_eq an equation broken into tokens, "returns" the sorted equation
+* @param label_eq an equation broken into token labels
+* @param variable the label to be on the lhs of the equation, either "varx" or "vary"
+*/
 bool sort_eq(vector<string>& token_eq, vector<string> label_eq, string variable) {
 	bool lhs = true;
 	int pos_equals;
@@ -288,6 +322,12 @@ bool sort_eq(vector<string>& token_eq, vector<string> label_eq, string variable)
 	return true;
 }
 
+/*
+* @summary intakes a sorted equation and sorts the rhs so that variables are right after =op and constants are at the end
+* @param token_eq an equation broken into tokens, "returns" the formatted equation
+* @param label_eq an equation broken into token labels
+* @param variable the label to be on the lhs of the equation, either "varx" or "vary"
+*/
 bool format_eq(vector<string>& token_eq, string variable) {
 	bool ret = true;
 	vector<string> label_eq = create_new_labels(token_eq);
@@ -367,6 +407,12 @@ bool format_eq(vector<string>& token_eq, string variable) {
 	}
 }
 
+/*
+* @summary intakes a condensed equation and outputs the solution to the variable on the lhs
+* @param token_eq an equation broken into tokens, "returns" the solved equation
+* @param label_eq an equation broken into token labels
+* @param variable the label to be on the lhs of the equation, either "varx" or "vary"
+*/
 void solve_eq(vector<string>& token_eq, string variable) {
 	if (variable == "varx") {
 		float x_el = stof(token_eq[0]);
@@ -423,6 +469,10 @@ void solve_eq(vector<string>& token_eq, string variable) {
 	}
 }
 
+/*
+* @summary intakes a sorted equation and adds like terms
+* @param token_eq an equation broken into tokens, "returns" the condensed equation
+*/
 bool add_sub(vector<string>& token_eq) {
 	vector<string> label_eq = create_new_labels(token_eq);
 
@@ -472,6 +522,10 @@ bool add_sub(vector<string>& token_eq) {
 	return true;
 }
 
+/*
+* @summary intakes a tokenized equation and creates labels for its tokens
+* @param token_eq an equation broken into tokens, to be used to generate token labels
+*/
 vector<string> create_new_labels(vector<string> token_eq) {
 	vector<string> labels(token_eq.size());
 
@@ -505,6 +559,10 @@ vector<string> create_new_labels(vector<string> token_eq) {
 	return labels;
 }
 
+/*
+* @summary determines how many variables each equation has and breaks it into cases dependent on that
+* @param labels_eq an equation broken into token labels
+*/
 int determine_case(vector<vector<string>> labels_eq) {
 	int eq_case = 0;
 	bool eq_x[2] = { 0 };
@@ -558,6 +616,10 @@ int determine_case(vector<vector<string>> labels_eq) {
 	return eq_case;
 }
 
+/*
+* @summary trims a string of " " at its beginning and end
+* @param str string to be trimmed of " "
+*/
 string trim_white(string str) {
 	str.erase(str.find_last_not_of(" ") + 1);
 	str.erase(0, str.find_first_not_of(" "));
