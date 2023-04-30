@@ -325,8 +325,8 @@ bool sort_eq(vector<string>& token_eq, vector<string> label_eq, string variable)
 
 /*
 * @summary intakes a sorted equation and sorts the rhs so that variables are right after =op and constants are at the end
-* @param token_eq an equation broken into tokens, "returns" the formatted equation
-* @param label_eq an equation broken into token labels
+* @param token_eq a sorted equation broken into tokens, "returns" the formatted equation
+* @param label_eq a sorted equation broken into token labels
 * @param variable the label to be on the lhs of the equation, either "varx" or "vary"
 * @return whether the equation has finished formatting or not
 */
@@ -410,9 +410,9 @@ bool format_eq(vector<string>& token_eq, string variable) {
 }
 
 /*
-* @summary intakes a condensed equation and outputs the solution to the variable on the lhs
-* @param token_eq an equation broken into tokens, "returns" the solved equation
-* @param label_eq an equation broken into token labels
+* @summary intakes an added equation and outputs the solution to the variable on the lhs
+* @param token_eq an added equation broken into tokens, "returns" the solved equation
+* @param label_eq an added equation broken into token labels
 * @param variable the label to be on the lhs of the equation, either "varx" or "vary"
 */
 void solve_eq(vector<string>& token_eq, string variable) {
@@ -473,7 +473,7 @@ void solve_eq(vector<string>& token_eq, string variable) {
 
 /*
 * @summary intakes a sorted equation and adds like terms
-* @param token_eq an equation broken into tokens, "returns" the condensed equation
+* @param token_eq a sorted equation broken into tokens, "returns" the condensed equation
 * @return whether the equation has finished adding like terms or not
 */
 bool add_sub(vector<string>& token_eq) {

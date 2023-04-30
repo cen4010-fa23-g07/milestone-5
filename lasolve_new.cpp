@@ -18,6 +18,14 @@ void solve(vector<string>&);
 vector<string> create_new_labels(vector<string>);
 
 /********functions*******/
+
+/*
+* @summary intakes a tokenized equation and mutliplies/divides its terms
+* @exception will not work correctly if two variables are multiplied (i.e. squares)
+* @param token_eq an equation broken into tokens, "returns" the condensed equation
+* @param label_eq an equation broken into token labels
+* @return whether the equation has fully multiplied/divided or not
+*/
 bool mult_div(vector<string>& token_eq, vector<string> label_eq) {
 	for (int i = 1; i < token_eq.size(); i++) {
 		float el1, el2, result;
@@ -58,6 +66,12 @@ bool mult_div(vector<string>& token_eq, vector<string> label_eq) {
 	return true;
 }
 
+/*
+* @summary intakes a multiplied equation and sorts it so variables are on one side and constants on the other
+* @param token_eq a multiplied equation broken into tokens, "returns" the sorted equation
+* @param label_eq a multiplied equation broken into token labels
+* @return whether the equation has been fully sorted or not
+*/
 bool sort_eq(vector<string>& token_eq, vector<string> label_eq) {
 	bool lhs = true;
 	int pos_equals;
@@ -72,7 +86,6 @@ bool sort_eq(vector<string>& token_eq, vector<string> label_eq) {
 		// if on the left of =op and element is a const
 		if (lhs && label_eq[i] == "const") {
 			string el = token_eq[i];
-			string el_label = label_eq[i];
 			string el_op = "null";
 			// if element is not first
 			if (i != 0) {
@@ -102,7 +115,6 @@ bool sort_eq(vector<string>& token_eq, vector<string> label_eq) {
 		// if on right side of =op and element is a var
 		else if (!lhs && label_eq[i] == "var") {
 			string el = token_eq[i];
-			string el_label = label_eq[i];
 			string el_op = "null";
 
 			// if element is not first after =op
@@ -169,6 +181,11 @@ bool sort_eq(vector<string>& token_eq, vector<string> label_eq) {
 	return true;
 }
 
+/*
+* @summary intakes a sorted equation and adds its like terms
+* @param token_eq a sorted equation broken into tokens, "returns" the condensed equation
+* @param label_eq a sorted equation broken into token labels
+*/
 void add_sub(vector<string>& token_eq, vector<string> label_eq) {
 	for (int i = 1; i < token_eq.size(); i++) {
 		float el1, el2, result;
@@ -207,6 +224,10 @@ void add_sub(vector<string>& token_eq, vector<string> label_eq) {
 	}
 }
 
+/*
+* @summary intakes an added equation and solves it for the variable on the lhs
+* @param token_eq an added equation broken into tokens
+*/
 void solve(vector<string>& token_eq) {
 	float var_el = stof(token_eq[0]);
 	float const_el = stof(token_eq[2]);
@@ -217,6 +238,11 @@ void solve(vector<string>& token_eq) {
 	token_eq[2] = to_string(const_el);
 }
 
+/*
+* @summary intakes a tokenized equation and produces labels for its tokens
+* @param token_eq an equation broken into tokens
+* @return labels for the tokenized equation
+*/
 vector<string> create_new_labels(vector<string> token_eq) {
 	vector<string> labels(token_eq.size());
 
