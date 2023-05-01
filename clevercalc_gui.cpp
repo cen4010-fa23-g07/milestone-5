@@ -38,6 +38,7 @@ struct StateInfo {
 	// fod example: user login info.
 	std::vector<std::string> currentProblem;
 	int currentUser = 0;
+	int solveState = -1;
 };
 
 //void update
@@ -439,6 +440,13 @@ void DrawRegister(HDC hdc, _In_ HWND   hWnd)
 	ShowWindow(registerWnd, // window handle
 		SW_NORMAL);
 	UpdateWindow(registerWnd);
+
+	HWND backWnd = FindWindowExW(hWnd, registerWnd, NULL, NULL);
+
+	ShowWindow(backWnd, // window handle
+		SW_NORMAL);
+	UpdateWindow(backWnd);
+
 	UpdateWindow(hWnd);
 	UpdateWindow(hWnd);
 }
@@ -569,6 +577,22 @@ void CreateRegisterWnds(HWND hWnd, _In_ int nCmdShow)
 		NULL
 	);
 
+	static TCHAR CCback[] = _T("Back");
+	HWND backWnd = CreateWindowExW(
+		WS_EX_LEFT,
+		WC_BUTTON, // button
+		CCback, // text in button
+		WS_BORDER | WS_CHILD, // style
+		20,
+		20, // TODO: something cleaner
+		50,
+		buttonHight,
+		hWnd,
+		NULL,
+		NULL,
+		NULL
+	);
+
 	
 	ShowWindow(emailWnd, // window handle
 		nCmdShow); 
@@ -594,6 +618,10 @@ void CreateRegisterWnds(HWND hWnd, _In_ int nCmdShow)
 		nCmdShow); 
 	UpdateWindow(create_accountWnd);
 
+	ShowWindow(backWnd, // window handle
+		nCmdShow);
+	UpdateWindow(backWnd);
+
 	// make window hidden
 	ShowWindow(emailWnd, // window handle
 		SW_HIDE);
@@ -618,6 +646,11 @@ void CreateRegisterWnds(HWND hWnd, _In_ int nCmdShow)
 	ShowWindow(create_accountWnd, // window handle
 		SW_HIDE); 
 	UpdateWindow(create_accountWnd);
+
+	ShowWindow(backWnd, // window handle
+		SW_HIDE);
+	UpdateWindow(backWnd);
+
 
 	UpdateWindow(hWnd);
 }
@@ -657,6 +690,12 @@ void HideRegister(_In_ HWND   hWnd)
 	ShowWindow(registerWnd, // window handle
 		SW_HIDE); 
 	UpdateWindow(registerWnd);
+
+	HWND backWnd = FindWindowExW(hWnd, registerWnd, NULL, NULL);
+
+	ShowWindow(backWnd, // window handle
+		SW_HIDE);
+	UpdateWindow(backWnd);
 	UpdateWindow(hWnd);
 }
 // END: Register
@@ -756,6 +795,12 @@ void DrawForgot(HDC hdc, _In_ HWND   hWnd)
 	ShowWindow(recoverWnd, // window handle
 		SW_NORMAL);
 	UpdateWindow(recoverWnd);
+
+	HWND backWnd = FindWindowExW(hWnd, recoverWnd, NULL, NULL);
+
+	ShowWindow(backWnd, // window handle
+		SW_NORMAL);
+	UpdateWindow(backWnd);
 	UpdateWindow(hWnd);
 }
 
@@ -857,6 +902,22 @@ void CreateForgotWnds(HWND hWnd, _In_ int nCmdShow)
 		NULL
 	);
 
+	static TCHAR CCback[] = _T("Back");
+	HWND backWnd = CreateWindowExW(
+		WS_EX_LEFT,
+		WC_BUTTON, // button
+		CCback, // text in button
+		WS_BORDER | WS_CHILD, // style
+		20,
+		20, // TODO: something cleaner
+		50,
+		buttonHight,
+		hWnd,
+		NULL,
+		NULL,
+		NULL
+	);
+
 
 
 	// TODO: make it so no more copy pasting this command
@@ -881,6 +942,10 @@ void CreateForgotWnds(HWND hWnd, _In_ int nCmdShow)
 		nCmdShow);
 	UpdateWindow(recoverWnd);
 
+	ShowWindow(backWnd, // window handle
+		nCmdShow);
+	UpdateWindow(backWnd);
+
 
 	// make window hidden
 	ShowWindow(usernameWnd, // window handle
@@ -898,6 +963,10 @@ void CreateForgotWnds(HWND hWnd, _In_ int nCmdShow)
 	ShowWindow(recoverWnd, // window handle
 		SW_HIDE);
 	UpdateWindow(recoverWnd);
+
+	ShowWindow(backWnd, // window handle
+		SW_HIDE);
+	UpdateWindow(backWnd);
 
 	UpdateWindow(hWnd);
 }
@@ -933,6 +1002,12 @@ void HideForgot(_In_ HWND   hWnd)
 	ShowWindow(recoverWnd, // window handle
 		SW_HIDE);
 	UpdateWindow(recoverWnd);
+
+	HWND backWnd = FindWindowExW(hWnd, recoverWnd, NULL, NULL);
+
+	ShowWindow(backWnd, // window handle
+		SW_HIDE);
+	UpdateWindow(backWnd);
 	UpdateWindow(hWnd);
 }
 // END: HOMEPAGE
@@ -1213,13 +1288,12 @@ void DrawLA(HDC hdc, _In_ HWND   hWnd)
 		SW_NORMAL);
 	UpdateWindow(backWnd);
 
-	HWND solveWnd = FindWindowExW(hWnd, backWnd, NULL, NULL);\
-	ShowWindow(solveWnd, // window handle
+	HWND solveWnd = FindWindowExW(hWnd, backWnd, NULL, NULL);
+	ShowWindow(solveWnd, // window handl
 		SW_NORMAL);
 	UpdateWindow(solveWnd);
 
-	HWND stepWnd = FindWindowExW(hWnd, solveWnd, NULL, NULL);+
-	EnableWindow(stepWnd, false);
+	HWND stepWnd = FindWindowExW(hWnd, solveWnd, NULL, NULL);
 	ShowWindow(stepWnd, // window handle
 		SW_NORMAL);
 	UpdateWindow(stepWnd);
@@ -1560,7 +1634,7 @@ void DrawSoE(HDC hdc, _In_ HWND   hWnd)
 	soeSolver.top = 45;
 	soeSolver.right = W_WIDTH;
 	soeSolver.bottom = 65;
-	TCHAR text_soeSolver[] = _T("Systems of Equations Solver. Currently doesn\'t solve systems of equations, see the Linear Algebra solver.");
+	TCHAR text_soeSolver[] = _T("Systems of Equations Solver.");
 	DrawTextExW( //https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-drawtextexw
 		hdc, // handle
 		text_soeSolver,// text
@@ -1592,7 +1666,6 @@ void DrawSoE(HDC hdc, _In_ HWND   hWnd)
 	UpdateWindow(solveWnd);
 
 	HWND stepWnd = FindWindowExW(hWnd, solveWnd, NULL, NULL);
-	EnableWindow(stepWnd, false);
 	ShowWindow(stepWnd, // window handle
 		SW_NORMAL);
 	UpdateWindow(stepWnd);
@@ -2197,8 +2270,8 @@ bool ValidInput(const std::string* pInput, bool multitpleEQs = false)
 {
 	bool valid = true, wasXFound = false, wasYFound = false, wasEqFound = false; // TODO something more encompassing. 
 	int validCharSize = 20;
-	const char validChars[] = { ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'x', 'x', '=', '+', '-', '/', '*', '(', ')', ';'}; // there are two x's. this is because using y is currently not allowed.
-	if (multitpleEQs) validCharSize = 21;
+	const char validChars[] = { ' ', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'x', '=', '+', '-', '/', '*', '(', ')', ';', 'y'};
+	if (multitpleEQs) validCharSize = 22;
 	for (int i = 0; i < pInput->size(); i++)
 	{
 		bool inTheList = false;
@@ -2219,7 +2292,7 @@ bool ValidInput(const std::string* pInput, bool multitpleEQs = false)
 			break;
 		}
 	}
-	if (wasXFound == false || wasEqFound == false) valid = false; // TODO yes it needs to actually check function integrety.
+	if ((wasXFound == false && wasYFound == false) || wasEqFound == false) valid = false;
 	return valid;
 }
 
@@ -2502,7 +2575,15 @@ LRESULT CALLBACK WndProc(
 				HWND passwordWnd = FindWindowExW(hWnd, usernameWnd, NULL, NULL);
 				HWND password2Wnd = FindWindowExW(hWnd, passwordWnd, NULL, NULL);
 				HWND registerWnd = FindWindowExW(hWnd, password2Wnd, NULL, NULL);
-				if (button == registerWnd)
+				HWND backWnd = FindWindowExW(hWnd, registerWnd, NULL, NULL);
+
+				if (button == backWnd)
+				{
+					state->currentPage = state->home;
+					HideRegister(hWnd);
+					InvalidateRgn(hWnd, NULL, TRUE); // cleans stuff up
+				}
+				else if (button == registerWnd)
 				{
 					std::string entry = "", sum = "", temp = "";
 					int userID = 1;
@@ -2716,8 +2797,15 @@ LRESULT CALLBACK WndProc(
 				HWND emailWnd = FindWindowExW(hWnd, usernameWnd, NULL, NULL);
 				HWND passWnd = FindWindowExW(hWnd, emailWnd, NULL, NULL);
 				HWND recoverWnd = FindWindowExW(hWnd, passWnd, NULL, NULL);
+				HWND backWnd = FindWindowExW(hWnd, recoverWnd, NULL, NULL);
 
-				if (button == recoverWnd)
+				if (button == backWnd)
+				{
+					state->currentPage = state->home;
+					HideForgot(hWnd);
+					InvalidateRgn(hWnd, NULL, TRUE); // cleans stuff up
+				}
+				else if (button == recoverWnd)
 				{
 					std::string entry = "", sum = "", temp = "", replaceme = "";
 					int currentScore = 0;
@@ -2902,25 +2990,20 @@ LRESULT CALLBACK WndProc(
 					if (ValidInput(&input))
 					{
 						state->currentProblem[0] = input;
-						bool solved = false;
-						while (!solved)
+						try
 						{
-							try
-							{
-								laStep(&state->currentProblem);
-								UserGivePoint(&(state->currentUser));
-							}
-							catch (const std::exception& e)
-							{
-								MessageBox(hWnd, L"Unfortunatly, your equation caused an error. This program is in beta, please be gentle.", L"CleverCalc", MB_OK);
-							}
-							break; // used until laStep gets a full implementation.
+							laSolve(&state->currentProblem);
+							UserGivePoint(&(state->currentUser));
+						}
+						catch (const std::exception& e)
+						{
+							MessageBox(hWnd, L"Unfortunatly, your equation caused an error. Please be gentle.", L"CleverCalc", MB_OK);
 						}
 						UpdateSolutionWnd(solWnd, &state->currentProblem);
 					}
 					else
 					{
-						MessageBox(hWnd, L"Invalid equation(s). Make sure to only include variables x, +, -, x, /, numbers, and an equal sign. Curretnly doesn\'t solve every equation.", L"CleverCalc", MB_OK);
+						MessageBox(hWnd, L"Invalid equation(s). Make sure to only include variables x, +, -, *, /, numbers, and an equal sign. Curretnly doesn\'t solve every equation.", L"CleverCalc", MB_OK);
 					}
 					
 				}
@@ -2932,29 +3015,44 @@ LRESULT CALLBACK WndProc(
 					TCHAR2String(solTCHAR, TCHAR_SMALL, &input);
 					if (ValidInput(&input))
 					{
+						std::vector<std::string> temp;
 						if (state->currentProblem.size() == 0)
 						{
 							state->currentProblem.push_back(input); // if there is no equation, fill the current problem
+							state->solveState = 0;
 						}
 						else if (input.compare(state->currentProblem[0]) != 0)
 						{
 							state->currentProblem.clear();
 							state->currentProblem.push_back(input);
+							state->solveState = 0;
 						} // if the equation changed, clear the current problem		
 						try
 						{
-							laStep(&state->currentProblem);
-							UserGivePoint(&(state->currentUser));
+							if (state->solveState == 0)
+							{
+								laSolve(&state->currentProblem);
+								UserGivePoint(&(state->currentUser));
+								state->solveState = 1;
+							}
+							else if (state->solveState <= state->currentProblem.size())
+							{
+								for (int i = 0; i < state->solveState; i++)
+								{
+									temp.push_back(state->currentProblem.at(i));
+								}
+								if(state->solveState < state->currentProblem.size()) state->solveState++;
+							}
 						}
 						catch (const std::exception& e)
 						{
-							MessageBox(hWnd, L"Unfortunatly, your equation caused an error. This program is in beta, please be gentle.", L"CleverCalc", MB_OK);
+							MessageBox(hWnd, L"Unfortunatly, your equation caused an error. Please be gentle.", L"CleverCalc", MB_OK);
 						}
-						UpdateSolutionWnd(solWnd, &state->currentProblem);
+						UpdateSolutionWnd(solWnd, &temp);
 					} 
 					else
 					{
-						MessageBox(hWnd, L"Invalid equation(s). Make sure to only include variables x, +, -, numbers, and an equal sign. Curretnly doesn\'t solve every equation.", L"CleverCalc", MB_OK);
+						MessageBox(hWnd, L"Invalid equation(s). Make sure to only include variables x, +, -, *, /, numbers, and an equal sign. Curretnly doesn\'t solve every equation.", L"CleverCalc", MB_OK);
 					}
 					
 				}
@@ -2990,25 +3088,20 @@ LRESULT CALLBACK WndProc(
 					if (ValidInput(&input, true))
 					{
 						state->currentProblem[0] = input;
-						bool solved = false;
-						while (!solved)
+						try
 						{
-							try
-							{
-								laStep(&state->currentProblem);
-								UserGivePoint(&(state->currentUser));
-							}
-							catch (const std::exception& e)
-							{
-								MessageBox(hWnd, L"Unfortunatly, your equation caused an error. This program is in beta, please be gentle.", L"CleverCalc", MB_OK);
-							}
-							break; // used until laStep gets a full implementation.
+							sysSolve(&state->currentProblem);
+							UserGivePoint(&(state->currentUser));
+						}
+						catch (const std::exception& e)
+						{
+							MessageBox(hWnd, L"Unfortunatly, your equation caused an error. Please be gentle.", L"CleverCalc", MB_OK);
 						}
 						UpdateSolutionWnd(solWnd, &state->currentProblem);
 					}
 					else
 					{
-						MessageBox(hWnd, L"Invalid equation(s). Make sure to only include variables x, +, -, numbers, and an equal sign. Curretnly doesn\'t solve every equation.", L"CleverCalc", MB_OK);
+						MessageBox(hWnd, L"Invalid equation(s). Make sure to only include variables x, y, +, -, *, /, ;, numbers, and an equal sign. Curretnly doesn\'t solve every equation.", L"CleverCalc", MB_OK);
 					}
 
 				}
@@ -3020,30 +3113,44 @@ LRESULT CALLBACK WndProc(
 					TCHAR2String(solTCHAR, TCHAR_SMALL, &input);
 					if (ValidInput(&input, true))
 					{
+						std::vector<std::string> temp;
 						if (state->currentProblem.size() == 0)
 						{
 							state->currentProblem.push_back(input); // if there is no equation, fill the current problem
+							state->solveState = 0;
 						}
 						else if (input.compare(state->currentProblem[0]) != 0)
 						{
 							state->currentProblem.clear();
 							state->currentProblem.push_back(input);
+							state->solveState = 0;
 						} // if the equation changed, clear the current problem		
-						try 
+						try
 						{
-							laStep(&state->currentProblem);
-							UserGivePoint(&(state->currentUser));
+							if (state->solveState == 0)
+							{
+								sysSolve(&state->currentProblem);
+								UserGivePoint(&(state->currentUser));
+								state->solveState = 1;
+							}
+							else if (state->solveState <= state->currentProblem.size())
+							{
+								for (int i = 0; i < state->solveState; i++)
+								{
+									temp.push_back(state->currentProblem.at(i));
+								}
+								if (state->solveState < state->currentProblem.size()) state->solveState++;
+							}
 						}
 						catch (const std::exception& e)
 						{
-							MessageBox(hWnd, L"Unfortunatly, your equation caused an error. This program is in beta, please be gentle.", L"CleverCalc", MB_OK);
+							MessageBox(hWnd, L"Unfortunatly, your equation caused an error. Please be gentle.", L"CleverCalc", MB_OK);
 						}
-						
-						UpdateSolutionWnd(solWnd, &state->currentProblem);
+						UpdateSolutionWnd(solWnd, &temp);
 					}
 					else
 					{
-						MessageBox(hWnd, L"Invalid equation(s). Make sure to only include variables x, +, -, numbers, and an equal sign. Curretnly doesn\'t solve every equation.", L"CleverCalc", MB_OK);
+						MessageBox(hWnd, L"Invalid equation(s). Make sure to only include variables x, y, +, -, *, /, ;, numbers, and an equal sign. Curretnly doesn\'t solve every equation.", L"CleverCalc", MB_OK);
 					}
 
 				}

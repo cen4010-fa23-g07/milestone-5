@@ -30,5 +30,8 @@ std::vector<std::string> create_new_eq(std::vector<std::string>, int, std::strin
 std::vector<std::string> create_new_labels(std::vector<std::string>);
 
 
-// la_step solves one step of a given solution vector<string>. returns true if its the last step.
-bool laStep(std::vector<std::string>* solution);
+// laSolve solves all steps of a given solution vector<string>. 
+void laSolve(std::vector<std::string>* solution);
+
+// sysSolve solves all steps of a given solutions vector<string>. 
+void sysSolve(std::vector<std::string>* solution);
